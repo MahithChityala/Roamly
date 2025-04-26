@@ -4,8 +4,8 @@ const mongoose=require("mongoose");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-
-
+const session=require("express-session");
+const flash=require("connect-flash");
 
 const listings=require("./router/listing.js");
 const reviews=require("./router/review.js");
@@ -16,6 +16,20 @@ app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
 app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
+
+const sessionOptions={
+    secret:"randomString",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now()+1000*60*60*24*7,
+        maxAge:1000*60*60*24*7,
+        httpOnly:true,
+    },
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
 
 const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
 const port=7000;
@@ -52,6 +66,11 @@ app.get("/",(req,res)=>{
 //     res.send("successful testing");
 // })
 
+app.use((req,res,next)=>{
+    res.locals.success=req.flash("success");
+    res.locals.error=req.flash("error");
+    next();
+})
 
 
 app.use("/listings",listings);
