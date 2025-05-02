@@ -7,6 +7,7 @@
     <div class="card listing-card" >
         <img class="card-img-top" src="<%=listing.image%>" alt="listing_image" height="300vh">
         <div class="card-body">
+          <p><i>Owned by <%=listing.owner.username%></i></p>
           <h5 class="card-title"><%=listing.title%></h5>
           <p>
           <%=listing.description%>
@@ -17,12 +18,14 @@
           <br>
           <%=listing.country%>
           </p>
+          <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
             <div class="btns">
                 <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark mx-2">edit</a>
                 <form method="post" action="/listings/<%=listing._id%>?_method=delete" >
                     <button class="btn btn-dark">delete</button>
                 </form>
             </div>
+            <%}%>
         </div>
       </div>
     </div>
